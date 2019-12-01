@@ -28,6 +28,7 @@ const IS_RTL = I18nManager.isRTL;
 export default class Carousel extends Component {
 
     static propTypes = {
+        onScrolling: PropTypes.func,
         data: PropTypes.array.isRequired,
         renderItem: PropTypes.func.isRequired,
         itemWidth: PropTypes.number, // required for horizontal carousel
@@ -71,6 +72,7 @@ export default class Carousel extends Component {
     };
 
     static defaultProps = {
+        onScrolling: 0,
         activeAnimationType: 'timing',
         activeAnimationOptions: null,
         activeSlideAlignment: 'center',
@@ -761,8 +763,11 @@ export default class Carousel extends Component {
 
     _onScroll (event) {
         const { callbackOffsetMargin, enableMomentum, onScroll } = this.props;
-
+        
         const scrollOffset = event ? this._getScrollOffset(event) : this._currentContentOffset;
+        const currentIndex = Math.ceil(scrollOffset / this.props.itemWidth);
+        this.props.onScrolling(currentIndex);
+        
         const nextActiveItem = this._getActiveItem(scrollOffset);
         const itemReached = nextActiveItem === this._itemToSnapTo;
         const scrollConditions =
